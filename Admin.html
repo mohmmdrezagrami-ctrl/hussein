@@ -12,16 +12,12 @@
 body{background:var(--bg);color:var(--main);font-family:'Tajawal',sans-serif;min-height:100vh}
 [hidden]{display:none!important}
 input,textarea,button{font:inherit}
-input[type=text],input[type=password],textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--bright)}
+input[type=text],textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--bright)}
 textarea{min-height:110px;resize:vertical;line-height:1.7}
 :focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 .btn{background:linear-gradient(120deg,var(--cyan),#0ea5e0);color:#04141C;border:0;border-radius:8px;padding:10px 22px;font-weight:700;cursor:pointer}
 .btn.g{background:transparent;color:var(--main);border:1px solid var(--line)}
 .btn.r{background:transparent;color:var(--red);border:1px solid var(--red)}
-#login{max-width:340px;margin:22vh auto;padding:0 20px;text-align:center}
-#login h1{color:var(--bright);margin-bottom:20px;font-size:1.4rem}
-#login input{margin-bottom:12px;text-align:center}
-#err{color:var(--red);font-size:.9rem;margin-top:10px;min-height:1.2em}
 header{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,14,20,.95);z-index:5}
 header b{color:var(--bright)}
 .tabs{display:flex;gap:6px;padding:14px 22px 0;flex-wrap:wrap}
@@ -48,22 +44,14 @@ label.sw input{width:18px;height:18px;accent-color:var(--cyan)}
 </head>
 <body>
 
-<div id="login">
-  <h1>🔒 دخول لوحة التحكم</h1>
-  <input type="password" id="code" placeholder="الرمز (افتراضي: 1234)" autocomplete="current-password">
-  <button class="btn" id="go">دخول</button>
-  <div id="err"></div>
-</div>
-
 <div id="app" hidden>
-  <header><b>لوحة التحكم</b><span><button class="btn g" id="view">الموقع</button> <button class="btn g" id="out">خروج</button></span></header>
+  <header><b>لوحة التحكم</b><span><button class="btn g" id="view">الموقع</button></span></header>
   <div class="tabs" id="tabs"></div>
   <main id="main"></main>
 </div>
 <div id="toast" hidden></div>
 
 <script>
-// رابط الـ Worker الخاص بك (ضع رابط ووركر الكلاودفلير هنا)
 const API = 'https://delicate-forest-3530.hussanjabba15.workers.dev/';
 
 const DEFP=[
@@ -77,39 +65,26 @@ const TABS={overview:['نظرة عامة',vOverview],site:['الموقع',vSite]
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=t=>new Date(t).toLocaleString('ar-IQ');
-let code=sessionStorage.getItem('c')||'',D,P,tab='overview';
+let D,P,tab='overview';
 
 async function api(p,body){
-  const r=await fetch(API+p,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:code},body:body?JSON.stringify(body):undefined});
-  if(r.status===401||r.status===429)throw r.status;
+  const r=await fetch(API+p,{method:body?'POST':'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
   return r.json();
 }
 function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;setTimeout(()=>e.hidden=true,1800)}
 
 async function load(){
-  if(!API || API.includes('your-worker-subdomain')){
-    $('#err').textContent='يرجى وضع رابط الـ Worker الصحيح في متغير API';
-    return;
-  }
   try{
     D=await api('/api/admin/data');
-    localStorage.setItem('hj_admin','1');
     P=D.cfg.projects||DEFP.map(x=>({...x}));
-    $('#login').hidden=true;
     $('#app').hidden=false;
     draw();
   }
   catch(e){
-    $('#login').hidden=false;
-    $('#app').hidden=true;
-    sessionStorage.removeItem('c');
-    $('#err').textContent = e===429 ? 'محاولات كثيرة، انتظر 15 دقيقة' : (code ? 'الرمز غير صحيح' : '');
+    console.error(e);
   }
 }
 
-$('#go').onclick=()=>{code=$('#code').value;sessionStorage.setItem('c',code);load()};
-$('#code').onkeydown=e=>{if(e.key==='Enter')$('#go').click()};
-$('#out').onclick=()=>{sessionStorage.removeItem('c');localStorage.removeItem('hj_admin');location.reload()};
 $('#view').onclick=()=>open('https://mohmmdrezagrami-ctrl.github.io/hussein/','_blank');
 
 function draw(){
@@ -145,7 +120,7 @@ function vProjects(){return `<div class="card"><h3>المشاريع (تظهر ف
   ${P.map((p,i)=>`<div class="row"><input type="text" data-i="${i}" data-f="name" value="${esc(p.name)}" placeholder="الاسم"><input type="text" data-i="${i}" data-f="desc" value="${esc(p.desc)}" placeholder="الوصف"><input type="text" data-i="${i}" data-f="stack" value="${esc(p.stack)}" placeholder="Python, API"><button class="btn r" data-del="${i}">حذف</button></div>`).join('')}
   <button class="btn g" id="add">+ إضافة مشروع</button></div><button class="btn" id="save">حفظ</button>`}
 function vInbox(){return `<div class="card"><h3>الرسائل الواردة (${D.inbox.length})</h3>${D.inbox.map(m=>`<div class="item"><small>${esc(m.name||'بدون اسم')} · ${fmt(m.t)}</small><p>${esc(m.msg)}</p></div>`).join('')||'<p class="hint">ما في رسائل.</p>'}</div>${D.inbox.length?'<button class="btn r" data-clear="inbox">مسح الكل</button>':''}`}
-function vChats(){return `<div class="card"><h3>المحادثات (${D.chats.length})</b></h3>${D.chats.map(m=>`<div class="item"><small>${fmt(m.t)}</small><p>👤 ${esc(m.q)}</p><p class="bot">🤖 ${esc(m.a)}</p></div>`).join('')||'<p class="hint">ما في محادثات.</p>'}</div>${D.chats.length?'<button class="btn r" data-clear="chats">مسح الكل</button>':''}`}
+function vChats(){return `<div class="card"><h3>المحادثات (${D.chats.length})</h3>${D.chats.map(m=>`<div class="item"><small>${fmt(m.t)}</small><p>👤 ${esc(m.q)}</p><p class="bot">🤖 ${esc(m.a)}</p></div>`).join('')||'<p class="hint">ما في محادثات.</p>'}</div>${D.chats.length?'<button class="btn r" data-clear="chats">مسح الكل</button>':''}`}
 
 function bind(){
   const m=$('#main');
@@ -162,7 +137,7 @@ async function save(){
   c.projects=tab==='projects'||c.projects?P.filter(p=>p.name.trim()):null;
   try{await api('/api/admin/config',c);toast('تم الحفظ ✓')}catch(e){toast('فشل الحفظ')}
 }
-if(code)load();
+load();
 </script>
 </body>
 </html>
