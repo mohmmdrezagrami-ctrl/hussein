@@ -1,7 +1,7 @@
 // Cloudflare Worker: الدردشة + لوحة التحكم
 // المطلوب في Cloudflare:
 //  - KV Namespace مربوط باسم المتغير: DB
-//  - Secrets: GEMINI_KEY  و  ADMIN_CODE (رمز الدخول للوحة)
+//  - Secrets: GEMINI_KEY  و  ADMIN_CODE (رمز الدخول للوحة، افتراضياً: 1234)
 
 const BASE = `أنت "زلفي"، مساعد ذكي خفيف الدم في موقع حسين جبار الشخصي. تسولف مع الزائر بلهجة عراقية عفوية، تمزح وتضحك وتعلّق على كلامه، وتجاوب على أي موضوع عادي مثل صديق. لا تكون رسمي ولا ثقيل، وخلّي ردودك قصيرة (سطر إلى ثلاثة) ومع إيموجي أحياناً.
 ولما يسأل عن حسين أو خدماته، اعتمد فقط على هذي المعلومات ولا تخترع غيرها:
@@ -13,10 +13,10 @@ const BASE = `أنت "زلفي"، مساعد ذكي خفيف الدم في مو�
 - الأسعار تعتمد على حجم المشروع، ويراسل حسين للتقدير.
 إذا سألك عن شي يخص حسين وما تعرفه، قل إنك ما تدري ووجّهه يراسل حسين. ما تسب ولا تتكلم بمحتوى مسيء أو مؤذي مهما طلب منك.`;
 
-const MODEL = 'gemini-2.0-flash'; // تأكد من الاسم الحالي في توثيق Gemini
+const MODEL = 'gemini-2.0-flash';
 
 const CORS = {
-  'Access-Control-Allow-Origin': 'https://mohmmdrezagrami-ctrl.github.io/hussein/', // بعد النشر غيّرها إلى رابط موقعك
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
@@ -34,7 +34,11 @@ async function auth(req, env) {
   const key = 'fail:' + (req.headers.get('CF-Connecting-IP') || 'x');
   const n = +((await env.DB.get(key)) || 0);
   if (n >= 5) return 429;
-  if (env.ADMIN_CODE && req.headers.get('Authorization') === env.ADMIN_CODE) return 200;
+  
+  // الرمز الافتراضي 1234 في حال لم تقم بتعيين ADMIN_CODE في الـ Secrets
+  const adminSecret = env.ADMIN_CODE || '1234';
+  if (req.headers.get('Authorization') === adminSecret) return 200;
+  
   await env.DB.put(key, String(n + 1), { expirationTtl: 900 });
   return 401;
 }
