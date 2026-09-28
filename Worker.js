@@ -16,7 +16,7 @@ const BASE = `أنت "زلفي"، مساعد ذكي خفيف الدم في مو�
 const MODEL = 'gemini-2.0-flash'; // تأكد من الاسم الحالي في توثيق Gemini
 
 const CORS = {
-  'Access-Control-Allow-Origin': '*', // بعد النشر غيّرها إلى رابط موقعك
+  'Access-Control-Allow-Origin': 'https://mohmmdrezagrami-ctrl.github.io/hussein/', // بعد النشر غيّرها إلى رابط موقعك
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
