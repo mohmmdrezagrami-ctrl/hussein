@@ -49,8 +49,8 @@ label.sw input{width:18px;height:18px;accent-color:var(--cyan)}
 <body>
 
 <div id="login">
-  <h1>🔒 دخول</h1>
-  <input type="password" id="code" placeholder="الرمز" autocomplete="current-password">
+  <h1>🔒 دخول لوحة التحكم</h1>
+  <input type="password" id="code" placeholder="الرمز (افتراضي: 1234)" autocomplete="current-password">
   <button class="btn" id="go">دخول</button>
   <div id="err"></div>
 </div>
@@ -63,8 +63,8 @@ label.sw input{width:18px;height:18px;accent-color:var(--cyan)}
 <div id="toast" hidden></div>
 
 <script>
-// ضع رابط الـ Worker هنا (نفس الرابط الموجود في index.html)
-const API='https://mohmmdrezagrami-ctrl.github.io/hussein/';
+// رابط الـ Worker الخاص بك (ضع رابط ووركر الكلاودفلير هنا)
+const API = 'https://your-worker-subdomain.workers.dev';
 
 const DEFP=[
  {name:'نظام إدارة داخلي',desc:'منصة لتنظيم العمليات الداخلية وتسهيل تتبّع المهام والبيانات بشكل مركزي.',stack:'Backend, DB'},
@@ -72,7 +72,6 @@ const DEFP=[
  {name:'أداة أتمتة مهام',desc:'سكربت يقلّل العمل اليدوي المتكرر ويحوّل عملية كانت تستهلك ساعات إلى دقائق.',stack:'Automation, Python'},
  {name:'موقع تعريفي مخصّص',desc:'تصميم وبناء صفحات تعريفية بهوية بصرية مستقلة، مبنية بالكامل بدون قوالب جاهزة.',stack:'HTML/CSS, UX'}];
 
-// كل تبويب = عنصر هنا. لإضافة ميزة جديدة (مثل التكتات) أضف تبويباً ودالة عرض.
 const TABS={overview:['نظرة عامة',vOverview],site:['الموقع',vSite],ai:['الذكاء',vAI],projects:['المشاريع',vProjects],inbox:['الرسائل',vInbox],chats:['المحادثات',vChats]};
 
 const $=s=>document.querySelector(s);
@@ -88,14 +87,30 @@ async function api(p,body){
 function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;setTimeout(()=>e.hidden=true,1800)}
 
 async function load(){
-  if(!API){$('#err').textContent='ضع رابط الـ Worker في المتغير API أعلى الملف';return}
-  try{D=await api('/api/admin/data');localStorage.setItem('hj_admin','1');P=D.cfg.projects||DEFP.map(x=>({...x}));$('#login').hidden=true;$('#app').hidden=false;draw()}
-  catch(e){$('#login').hidden=false;$('#app').hidden=true;sessionStorage.removeItem('c');$('#err').textContent=e===429?'محاولات كثيرة، انتظر 15 دقيقة':(code?'الرمز غلط':'')}
+  if(!API || API.includes('your-worker-subdomain')){
+    $('#err').textContent='يرجى وضع رابط الـ Worker الصحيح في متغير API';
+    return;
+  }
+  try{
+    D=await api('/api/admin/data');
+    localStorage.setItem('hj_admin','1');
+    P=D.cfg.projects||DEFP.map(x=>({...x}));
+    $('#login').hidden=true;
+    $('#app').hidden=false;
+    draw();
+  }
+  catch(e){
+    $('#login').hidden=false;
+    $('#app').hidden=true;
+    sessionStorage.removeItem('c');
+    $('#err').textContent = e===429 ? 'محاولات كثيرة، انتظر 15 دقيقة' : (code ? 'الرمز غير صحيح' : '');
+  }
 }
+
 $('#go').onclick=()=>{code=$('#code').value;sessionStorage.setItem('c',code);load()};
 $('#code').onkeydown=e=>{if(e.key==='Enter')$('#go').click()};
 $('#out').onclick=()=>{sessionStorage.removeItem('c');localStorage.removeItem('hj_admin');location.reload()};
-$('#view').onclick=()=>open('index.html','_blank');
+$('#view').onclick=()=>open('https://mohmmdrezagrami-ctrl.github.io/hussein/','_blank');
 
 function draw(){
   $('#tabs').innerHTML=Object.entries(TABS).map(([k,v])=>`<button data-k="${k}" class="${k===tab?'on':''}">${v[0]}</button>`).join('');
@@ -125,12 +140,12 @@ function vSite(){const c=D.cfg;return `<div class="card"><h3>وضع الصيان
   <button class="btn" id="save">حفظ</button>`}
 function vAI(){return `<div class="card"><h3>شخصية الذكاء</h3>
   <textarea id="pe" placeholder="مثال: خلّك مرح أكثر، اذكر إنك تحب كرة القدم، لا تستخدم إيموجي...">${esc(D.cfg.persona)}</textarea>
-  <p class="hint">هذا النص يُضاف فوق التعليمات الأساسية (المعلومات عنك محفوظة في الـ Worker). يسري فوراً بعد الحفظ.</p></div><button class="btn" id="save">حفظ</button>`}
+  <p class="hint">هذا النص يُضاف فوق التعليمات الأساسية. يسري فوراً بعد الحفظ.</p></div><button class="btn" id="save">حفظ</button>`}
 function vProjects(){return `<div class="card"><h3>المشاريع (تظهر في الموقع)</h3>
   ${P.map((p,i)=>`<div class="row"><input type="text" data-i="${i}" data-f="name" value="${esc(p.name)}" placeholder="الاسم"><input type="text" data-i="${i}" data-f="desc" value="${esc(p.desc)}" placeholder="الوصف"><input type="text" data-i="${i}" data-f="stack" value="${esc(p.stack)}" placeholder="Python, API"><button class="btn r" data-del="${i}">حذف</button></div>`).join('')}
   <button class="btn g" id="add">+ إضافة مشروع</button></div><button class="btn" id="save">حفظ</button>`}
 function vInbox(){return `<div class="card"><h3>الرسائل الواردة (${D.inbox.length})</h3>${D.inbox.map(m=>`<div class="item"><small>${esc(m.name||'بدون اسم')} · ${fmt(m.t)}</small><p>${esc(m.msg)}</p></div>`).join('')||'<p class="hint">ما في رسائل.</p>'}</div>${D.inbox.length?'<button class="btn r" data-clear="inbox">مسح الكل</button>':''}`}
-function vChats(){return `<div class="card"><h3>المحادثات (${D.chats.length})</h3>${D.chats.map(m=>`<div class="item"><small>${fmt(m.t)}</small><p>👤 ${esc(m.q)}</p><p class="bot">🤖 ${esc(m.a)}</p></div>`).join('')||'<p class="hint">ما في محادثات.</p>'}</div>${D.chats.length?'<button class="btn r" data-clear="chats">مسح الكل</button>':''}`}
+function vChats(){return `<div class="card"><h3>المحادثات (${D.chats.length})</b></h3>${D.chats.map(m=>`<div class="item"><small>${fmt(m.t)}</small><p>👤 ${esc(m.q)}</p><p class="bot">🤖 ${esc(m.a)}</p></div>`).join('')||'<p class="hint">ما في محادثات.</p>'}</div>${D.chats.length?'<button class="btn r" data-clear="chats">مسح الكل</button>':''}`}
 
 function bind(){
   const m=$('#main');
