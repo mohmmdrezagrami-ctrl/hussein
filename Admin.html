@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0E14;--card:#121A26;--line:#1E2A38;--cyan:#00D4FF;--violet:#7B2FF7;--main:#C8D3E0;--dim:#7d8ca0;--bright:#F3F7FB;--red:#ff5d6c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--main);font-family:'Tajawal',sans-serif;min-height:100vh}
+[hidden]{display:none!important}
+input,textarea,button{font:inherit}
+input[type=text],input[type=password],textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--bright)}
+textarea{min-height:110px;resize:vertical;line-height:1.7}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.btn{background:linear-gradient(120deg,var(--cyan),#0ea5e0);color:#04141C;border:0;border-radius:8px;padding:10px 22px;font-weight:700;cursor:pointer}
+.btn.g{background:transparent;color:var(--main);border:1px solid var(--line)}
+.btn.r{background:transparent;color:var(--red);border:1px solid var(--red)}
+#login{max-width:340px;margin:22vh auto;padding:0 20px;text-align:center}
+#login h1{color:var(--bright);margin-bottom:20px;font-size:1.4rem}
+#login input{margin-bottom:12px;text-align:center}
+#err{color:var(--red);font-size:.9rem;margin-top:10px;min-height:1.2em}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,14,20,.95);z-index:5}
+header b{color:var(--bright)}
+.tabs{display:flex;gap:6px;padding:14px 22px 0;flex-wrap:wrap}
+.tabs button{background:none;border:1px solid var(--line);color:var(--dim);padding:8px 16px;border-radius:8px;cursor:pointer}
+.tabs button.on{color:#04141C;background:var(--cyan);border-color:var(--cyan);font-weight:700}
+main{padding:22px;max-width:860px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px}
+.card h3{color:var(--bright);margin-bottom:12px;font-size:1.05rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.num{font-size:2rem;font-weight:700;color:var(--cyan)}
+.num+span{display:block;color:var(--dim);font-size:.88rem;margin-top:4px}
+label.sw{display:flex;align-items:center;gap:10px;margin:12px 0 8px;color:var(--bright);cursor:pointer}
+label.sw input{width:18px;height:18px;accent-color:var(--cyan)}
+.hint{color:var(--dim);font-size:.85rem;margin-top:6px;line-height:1.7}
+.row{display:grid;grid-template-columns:1fr 1.6fr 1fr auto;gap:8px;margin-bottom:8px}
+@media (max-width:640px){.row{grid-template-columns:1fr}}
+.item{border-bottom:1px solid var(--line);padding:12px 0}
+.item:last-child{border:0}
+.item small{color:var(--dim)}
+.item p{margin-top:4px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.bot{color:#a678ff}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--cyan);color:#04141C;padding:10px 22px;border-radius:8px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h1>🔒 دخول</h1>
+  <input type="password" id="code" placeholder="الرمز" autocomplete="current-password">
+  <button class="btn" id="go">دخول</button>
+  <div id="err"></div>
+</div>
+
+<div id="app" hidden>
+  <header><b>لوحة التحكم</b><span><button class="btn g" id="view">الموقع</button> <button class="btn g" id="out">خروج</button></span></header>
+  <div class="tabs" id="tabs"></div>
+  <main id="main"></main>
+</div>
+<div id="toast" hidden></div>
+
+<script>
+// ضع رابط الـ Worker هنا (نفس الرابط الموجود في index.html)
+const API='https://mohmmdrezagrami-ctrl.github.io/hussein/';
+
+const DEFP=[
+ {name:'نظام إدارة داخلي',desc:'منصة لتنظيم العمليات الداخلية وتسهيل تتبّع المهام والبيانات بشكل مركزي.',stack:'Backend, DB'},
+ {name:'تطبيق ويب تفاعلي',desc:'واجهة مستخدم سريعة الاستجابة مربوطة بخدمات API لمعالجة البيانات في الوقت الحقيقي.',stack:'Frontend, API'},
+ {name:'أداة أتمتة مهام',desc:'سكربت يقلّل العمل اليدوي المتكرر ويحوّل عملية كانت تستهلك ساعات إلى دقائق.',stack:'Automation, Python'},
+ {name:'موقع تعريفي مخصّص',desc:'تصميم وبناء صفحات تعريفية بهوية بصرية مستقلة، مبنية بالكامل بدون قوالب جاهزة.',stack:'HTML/CSS, UX'}];
+
+// كل تبويب = عنصر هنا. لإضافة ميزة جديدة (مثل التكتات) أضف تبويباً ودالة عرض.
+const TABS={overview:['نظرة عامة',vOverview],site:['الموقع',vSite],ai:['الذكاء',vAI],projects:['المشاريع',vProjects],inbox:['الرسائل',vInbox],chats:['المحادثات',vChats]};
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=t=>new Date(t).toLocaleString('ar-IQ');
+let code=sessionStorage.getItem('c')||'',D,P,tab='overview';
+
+async function api(p,body){
+  const r=await fetch(API+p,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:code},body:body?JSON.stringify(body):undefined});
+  if(r.status===401||r.status===429)throw r.status;
+  return r.json();
+}
+function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;setTimeout(()=>e.hidden=true,1800)}
+
+async function load(){
+  if(!API){$('#err').textContent='ضع رابط الـ Worker في المتغير API أعلى الملف';return}
+  try{D=await api('/api/admin/data');localStorage.setItem('hj_admin','1');P=D.cfg.projects||DEFP.map(x=>({...x}));$('#login').hidden=true;$('#app').hidden=false;draw()}
+  catch(e){$('#login').hidden=false;$('#app').hidden=true;sessionStorage.removeItem('c');$('#err').textContent=e===429?'محاولات كثيرة، انتظر 15 دقيقة':(code?'الرمز غلط':'')}
+}
+$('#go').onclick=()=>{code=$('#code').value;sessionStorage.setItem('c',code);load()};
+$('#code').onkeydown=e=>{if(e.key==='Enter')$('#go').click()};
+$('#out').onclick=()=>{sessionStorage.removeItem('c');localStorage.removeItem('hj_admin');location.reload()};
+$('#view').onclick=()=>open('index.html','_blank');
+
+function draw(){
+  $('#tabs').innerHTML=Object.entries(TABS).map(([k,v])=>`<button data-k="${k}" class="${k===tab?'on':''}">${v[0]}</button>`).join('');
+  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.k;draw()});
+  $('#main').innerHTML=TABS[tab][1]();
+  bind();
+}
+
+function vOverview(){
+  const v=D.stats.visits||{},days=Object.keys(v).sort(),today=new Date().toISOString().slice(0,10);
+  const week=days.slice(-7).reduce((a,k)=>a+v[k],0);
+  return `<div class="grid">
+   <div class="card"><div class="num">${v[today]||0}</div><span>زيارات اليوم</span></div>
+   <div class="card"><div class="num">${week}</div><span>زيارات آخر 7 أيام</span></div>
+   <div class="card"><div class="num">${D.stats.chats||0}</div><span>رسائل الدردشة</span></div>
+   <div class="card"><div class="num">${D.inbox.length}</div><span>رسائل واردة</span></div></div>
+   <div class="card"><h3>الحالة</h3><p>الموقع: <b>${D.cfg.maintenance?'🛠️ تحت الصيانة':'✅ يعمل'}</b></p><p>الدردشة: <b>${D.cfg.chatOn?'✅ شغالة':'⏸️ متوقفة'}</b></p></div>`;
+}
+function vSite(){const c=D.cfg;return `<div class="card"><h3>وضع الصيانة</h3>
+  <label class="sw"><input type="checkbox" id="mt" ${c.maintenance?'checked':''}> تفعيل الصيانة (الزوار يشوفون رسالة فقط)</label>
+  <input type="text" id="mtm" value="${esc(c.maintenanceMsg)}">
+  <p class="hint">أنت تشوف الموقع طبيعي لأنك مسجّل دخول من هذا المتصفح.</p></div>
+  <div class="card"><h3>شريط إعلان</h3>
+  <label class="sw"><input type="checkbox" id="bo" ${c.bannerOn?'checked':''}> إظهار الشريط أعلى الموقع</label>
+  <input type="text" id="bt" value="${esc(c.banner)}" placeholder="مثال: متاح لمشاريع جديدة 🚀"></div>
+  <div class="card"><h3>الدردشة</h3><label class="sw"><input type="checkbox" id="co" ${c.chatOn?'checked':''}> تشغيل الدردشة للزوار</label></div>
+  <button class="btn" id="save">حفظ</button>`}
+function vAI(){return `<div class="card"><h3>شخصية الذكاء</h3>
+  <textarea id="pe" placeholder="مثال: خلّك مرح أكثر، اذكر إنك تحب كرة القدم، لا تستخدم إيموجي...">${esc(D.cfg.persona)}</textarea>
+  <p class="hint">هذا النص يُضاف فوق التعليمات الأساسية (المعلومات عنك محفوظة في الـ Worker). يسري فوراً بعد الحفظ.</p></div><button class="btn" id="save">حفظ</button>`}
+function vProjects(){return `<div class="card"><h3>المشاريع (تظهر في الموقع)</h3>
+  ${P.map((p,i)=>`<div class="row"><input type="text" data-i="${i}" data-f="name" value="${esc(p.name)}" placeholder="الاسم"><input type="text" data-i="${i}" data-f="desc" value="${esc(p.desc)}" placeholder="الوصف"><input type="text" data-i="${i}" data-f="stack" value="${esc(p.stack)}" placeholder="Python, API"><button class="btn r" data-del="${i}">حذف</button></div>`).join('')}
+  <button class="btn g" id="add">+ إضافة مشروع</button></div><button class="btn" id="save">حفظ</button>`}
+function vInbox(){return `<div class="card"><h3>الرسائل الواردة (${D.inbox.length})</h3>${D.inbox.map(m=>`<div class="item"><small>${esc(m.name||'بدون اسم')} · ${fmt(m.t)}</small><p>${esc(m.msg)}</p></div>`).join('')||'<p class="hint">ما في رسائل.</p>'}</div>${D.inbox.length?'<button class="btn r" data-clear="inbox">مسح الكل</button>':''}`}
+function vChats(){return `<div class="card"><h3>المحادثات (${D.chats.length})</h3>${D.chats.map(m=>`<div class="item"><small>${fmt(m.t)}</small><p>👤 ${esc(m.q)}</p><p class="bot">🤖 ${esc(m.a)}</p></div>`).join('')||'<p class="hint">ما في محادثات.</p>'}</div>${D.chats.length?'<button class="btn r" data-clear="chats">مسح الكل</button>':''}`}
+
+function bind(){
+  const m=$('#main');
+  m.querySelectorAll('[data-f]').forEach(i=>i.oninput=()=>P[i.dataset.i][i.dataset.f]=i.value);
+  m.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{P.splice(+b.dataset.del,1);draw()});
+  const a=$('#add');if(a)a.onclick=()=>{if(P.length<12){P.push({name:'',desc:'',stack:''});draw()}};
+  m.querySelectorAll('[data-clear]').forEach(b=>b.onclick=async()=>{if(confirm('متأكد؟')){await api('/api/admin/clear',{what:b.dataset.clear});D[b.dataset.clear]=[];draw();toast('تم')}});
+  const s=$('#save');if(s)s.onclick=save;
+}
+async function save(){
+  const g=id=>$('#'+id),c=D.cfg;
+  if(g('mt')){c.maintenance=g('mt').checked;c.maintenanceMsg=g('mtm').value;c.bannerOn=g('bo').checked;c.banner=g('bt').value;c.chatOn=g('co').checked}
+  if(g('pe'))c.persona=g('pe').value;
+  c.projects=tab==='projects'||c.projects?P.filter(p=>p.name.trim()):null;
+  try{await api('/api/admin/config',c);toast('تم الحفظ ✓')}catch(e){toast('فشل الحفظ')}
+}
+if(code)load();
+</script>
+</body>
+</html>
