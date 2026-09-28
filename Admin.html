@@ -4,55 +4,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<title>لوحة التحكم</title>
+<title>لوحة التحكم الاحترافية - حسين جبار</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0A0E14;--card:#121A26;--line:#1E2A38;--cyan:#00D4FF;--violet:#7B2FF7;--main:#C8D3E0;--dim:#7d8ca0;--bright:#F3F7FB;--red:#ff5d6c}
+:root{--bg:#0a0e14;--card:#121a26;--line:#1e2a38;--cyan:#00d4ff;--violet:#7b2ff7;--main:#c8d3e0;--dim:#7d8ca0;--bright:#f3f7fb;--red:#ff5d6c;--green:#00ffa3}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--main);font-family:'Tajawal',sans-serif;min-height:100vh}
-[hidden]{display:none!important}
+body{background:var(--bg);color:var(--main);font-family:'Tajawal',sans-serif;min-height:100vh;padding-bottom:40px}
 input,textarea,button{font:inherit}
-input[type=text],textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--bright)}
-textarea{min-height:110px;resize:vertical;line-height:1.7}
-:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
-.btn{background:linear-gradient(120deg,var(--cyan),#0ea5e0);color:#04141C;border:0;border-radius:8px;padding:10px 22px;font-weight:700;cursor:pointer}
+input[type=text],textarea{width:100%;background:#06090f;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--bright);transition:0.2s}
+input[type=text]:focus,textarea:focus{border-color:var(--cyan);outline:none}
+textarea{min-height:120px;resize:vertical;line-height:1.7}
+.btn{background:linear-gradient(120deg,var(--cyan),#0ea5e0);color:#04141c;border:0;border-radius:10px;padding:11px 24px;font-weight:700;cursor:pointer;transition:0.2s}
+.btn:hover{opacity:0.9;transform:translateY(-1px)}
 .btn.g{background:transparent;color:var(--main);border:1px solid var(--line)}
+.btn.g:hover{border-color:var(--cyan);color:var(--cyan)}
 .btn.r{background:transparent;color:var(--red);border:1px solid var(--red)}
-header{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,14,20,.95);z-index:5}
-header b{color:var(--bright)}
-.tabs{display:flex;gap:6px;padding:14px 22px 0;flex-wrap:wrap}
-.tabs button{background:none;border:1px solid var(--line);color:var(--dim);padding:8px 16px;border-radius:8px;cursor:pointer}
-.tabs button.on{color:#04141C;background:var(--cyan);border-color:var(--cyan);font-weight:700}
-main{padding:22px;max-width:860px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px}
-.card h3{color:var(--bright);margin-bottom:12px;font-size:1.05rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
-.num{font-size:2rem;font-weight:700;color:var(--cyan)}
-.num+span{display:block;color:var(--dim);font-size:.88rem;margin-top:4px}
-label.sw{display:flex;align-items:center;gap:10px;margin:12px 0 8px;color:var(--bright);cursor:pointer}
-label.sw input{width:18px;height:18px;accent-color:var(--cyan)}
-.hint{color:var(--dim);font-size:.85rem;margin-top:6px;line-height:1.7}
-.row{display:grid;grid-template-columns:1fr 1.6fr 1fr auto;gap:8px;margin-bottom:8px}
-@media (max-width:640px){.row{grid-template-columns:1fr}}
-.item{border-bottom:1px solid var(--line);padding:12px 0}
+.btn.r:hover{background:var(--red);color:#fff}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,14,20,.95);backdrop-filter:blur(8px);z-index:10}
+header b{color:var(--bright);font-size:1.15rem}
+.tabs{display:flex;gap:8px;padding:20px 28px 0;flex-wrap:wrap;max-width:960px;margin:0 auto}
+.tabs button{background:var(--card);border:1px solid var(--line);color:var(--dim);padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:500;transition:0.2s}
+.tabs button.on{color:#04141c;background:var(--cyan);border-color:var(--cyan);font-weight:700}
+main{padding:24px 28px;max-width:960px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.card h3{color:var(--bright);margin-bottom:16px;font-size:1.1rem;display:flex;align-items:center;gap:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;text-align:center}
+.num{font-size:2.2rem;font-weight:700;color:var(--cyan)}
+.num+span{display:block;color:var(--dim);font-size:.9rem;margin-top:6px}
+label.sw{display:flex;align-items:center;gap:12px;margin:14px 0 10px;color:var(--bright);cursor:pointer;font-weight:500}
+label.sw input{width:20px;height:20px;accent-color:var(--cyan);cursor:pointer}
+.hint{color:var(--dim);font-size:.85rem;margin-top:8px;line-height:1.6}
+.project-row{display:grid;grid-template-columns:1fr 2fr 1fr auto;gap:10px;margin-bottom:12px;background:#06090f;padding:12px;border-radius:10px;border:1px solid var(--line)}
+@media (max-width:768px){.project-row{grid-template-columns:1fr}}
+.item{border-bottom:1px solid var(--line);padding:14px 0}
 .item:last-child{border:0}
-.item small{color:var(--dim)}
-.item p{margin-top:4px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.item small{color:var(--dim);font-size:0.8rem}
+.item p{margin-top:6px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
 .bot{color:#a678ff}
-#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--cyan);color:#04141C;padding:10px 22px;border-radius:8px;font-weight:700}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--cyan);color:#04141c;padding:12px 28px;border-radius:10px;font-weight:700;box-shadow:0 5px 20px rgba(0,212,255,0.3);z-index:100;transition:0.3s}
+.action-bar{display:flex;justify-content:flex-end;margin-top:15px}
 </style>
 </head>
 <body>
 
-<div id="app" hidden>
-  <header><b>لوحة التحكم</b><span><button class="btn g" id="view">الموقع</button></span></header>
-  <div class="tabs" id="tabs"></div>
-  <main id="main"></main>
-</div>
+<header>
+  <b>🎛️ لوحة تحكم موقع حسين جبار</b>
+  <span><button class="btn g" id="view">عرض الموقع 🌐</button></span>
+</header>
+
+<div class="tabs" id="tabs"></div>
+<main id="main"></main>
 <div id="toast" hidden></div>
 
 <script>
-const API = 'https://delicate-forest-3530.hussanjabba15.workers.dev/';
+const API = 'https://delicate-forest-3530.hussanjabba15.workers.dev';
 
 const DEFP=[
  {name:'نظام إدارة داخلي',desc:'منصة لتنظيم العمليات الداخلية وتسهيل تتبّع المهام والبيانات بشكل مركزي.',stack:'Backend, DB'},
@@ -60,28 +66,33 @@ const DEFP=[
  {name:'أداة أتمتة مهام',desc:'سكربت يقلّل العمل اليدوي المتكرر ويحوّل عملية كانت تستهلك ساعات إلى دقائق.',stack:'Automation, Python'},
  {name:'موقع تعريفي مخصّص',desc:'تصميم وبناء صفحات تعريفية بهوية بصرية مستقلة، مبنية بالكامل بدون قوالب جاهزة.',stack:'HTML/CSS, UX'}];
 
-const TABS={overview:['نظرة عامة',vOverview],site:['الموقع',vSite],ai:['الذكاء',vAI],projects:['المشاريع',vProjects],inbox:['الرسائل',vInbox],chats:['المحادثات',vChats]};
+const TABS={
+  overview:['📊 نظرة عامة',vOverview],
+  site:['⚙️ إعدادات الموقع',vSite],
+  ai:['🤖 شخصية الذكاء (زلفي)',vAI],
+  projects:['🚀 المشاريع',vProjects],
+  inbox:['📥 الرسائل الواردة',vInbox],
+  chats:['💬 سجل المحادثات',vChats]
+};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=t=>new Date(t).toLocaleString('ar-IQ');
-let D,P,tab='overview';
+let D, P, tab='overview';
 
 async function api(p,body){
   const r=await fetch(API+p,{method:body?'POST':'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
   return r.json();
 }
-function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;setTimeout(()=>e.hidden=true,1800)}
+function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;setTimeout(()=>e.hidden=true,2000)}
 
 async function load(){
   try{
     D=await api('/api/admin/data');
     P=D.cfg.projects||DEFP.map(x=>({...x}));
-    $('#app').hidden=false;
     draw();
-  }
-  catch(e){
-    console.error(e);
+  }catch(e){
+    toast('خطأ في الاتصال بالخادم');
   }
 }
 
@@ -97,46 +108,131 @@ function draw(){
 function vOverview(){
   const v=D.stats.visits||{},days=Object.keys(v).sort(),today=new Date().toISOString().slice(0,10);
   const week=days.slice(-7).reduce((a,k)=>a+v[k],0);
-  return `<div class="grid">
-   <div class="card"><div class="num">${v[today]||0}</div><span>زيارات اليوم</span></div>
-   <div class="card"><div class="num">${week}</div><span>زيارات آخر 7 أيام</span></div>
-   <div class="card"><div class="num">${D.stats.chats||0}</div><span>رسائل الدردشة</span></div>
-   <div class="card"><div class="num">${D.inbox.length}</div><span>رسائل واردة</span></div></div>
-   <div class="card"><h3>الحالة</h3><p>الموقع: <b>${D.cfg.maintenance?'🛠️ تحت الصيانة':'✅ يعمل'}</b></p><p>الدردشة: <b>${D.cfg.chatOn?'✅ شغالة':'⏸️ متوقفة'}</b></p></div>`;
+  return `
+   <div class="grid">
+     <div class="stat-card"><div class="num">${v[today]||0}</div><span>زيارات اليوم</span></div>
+     <div class="stat-card"><div class="num">${week}</div><span>زيارات آخر 7 أيام</span></div>
+     <div class="stat-card"><div class="num">${D.stats.chats||0}</div><span>رسائل الدردشة</span></div>
+     <div class="stat-card"><div class="num">${D.inbox.length}</div><span>رسائل واردة</span></div>
+   </div>
+   <div class="card">
+     <h3>🔍 حالة النظام الحالية</h3>
+     <p style="margin-bottom:8px">حالة الموقع: <b>${D.cfg.maintenance?'🛠️ تحت الصيانة حالياً':'✅ يعمل بشكل طبيعي'}</b></p>
+     <p>حالة مساعد الذكاء (زلفي): <b>${D.cfg.chatOn?'🟢 شغال ومتاح للزوار':'🔴 متوقف مؤقتاً'}</b></p>
+   </div>`;
 }
-function vSite(){const c=D.cfg;return `<div class="card"><h3>وضع الصيانة</h3>
-  <label class="sw"><input type="checkbox" id="mt" ${c.maintenance?'checked':''}> تفعيل الصيانة (الزوار يشوفون رسالة فقط)</label>
-  <input type="text" id="mtm" value="${esc(c.maintenanceMsg)}">
-  <p class="hint">أنت تشوف الموقع طبيعي لأنك مسجّل دخول من هذا المتصفح.</p></div>
-  <div class="card"><h3>شريط إعلان</h3>
-  <label class="sw"><input type="checkbox" id="bo" ${c.bannerOn?'checked':''}> إظهار الشريط أعلى الموقع</label>
-  <input type="text" id="bt" value="${esc(c.banner)}" placeholder="مثال: متاح لمشاريع جديدة 🚀"></div>
-  <div class="card"><h3>الدردشة</h3><label class="sw"><input type="checkbox" id="co" ${c.chatOn?'checked':''}> تشغيل الدردشة للزوار</label></div>
-  <button class="btn" id="save">حفظ</button>`}
-function vAI(){return `<div class="card"><h3>شخصية الذكاء</h3>
-  <textarea id="pe" placeholder="مثال: خلّك مرح أكثر، اذكر إنك تحب كرة القدم، لا تستخدم إيموجي...">${esc(D.cfg.persona)}</textarea>
-  <p class="hint">هذا النص يُضاف فوق التعليمات الأساسية. يسري فوراً بعد الحفظ.</p></div><button class="btn" id="save">حفظ</button>`}
-function vProjects(){return `<div class="card"><h3>المشاريع (تظهر في الموقع)</h3>
-  ${P.map((p,i)=>`<div class="row"><input type="text" data-i="${i}" data-f="name" value="${esc(p.name)}" placeholder="الاسم"><input type="text" data-i="${i}" data-f="desc" value="${esc(p.desc)}" placeholder="الوصف"><input type="text" data-i="${i}" data-f="stack" value="${esc(p.stack)}" placeholder="Python, API"><button class="btn r" data-del="${i}">حذف</button></div>`).join('')}
-  <button class="btn g" id="add">+ إضافة مشروع</button></div><button class="btn" id="save">حفظ</button>`}
-function vInbox(){return `<div class="card"><h3>الرسائل الواردة (${D.inbox.length})</h3>${D.inbox.map(m=>`<div class="item"><small>${esc(m.name||'بدون اسم')} · ${fmt(m.t)}</small><p>${esc(m.msg)}</p></div>`).join('')||'<p class="hint">ما في رسائل.</p>'}</div>${D.inbox.length?'<button class="btn r" data-clear="inbox">مسح الكل</button>':''}`}
-function vChats(){return `<div class="card"><h3>المحادثات (${D.chats.length})</h3>${D.chats.map(m=>`<div class="item"><small>${fmt(m.t)}</small><p>👤 ${esc(m.q)}</p><p class="bot">🤖 ${esc(m.a)}</p></div>`).join('')||'<p class="hint">ما في محادثات.</p>'}</div>${D.chats.length?'<button class="btn r" data-clear="chats">مسح الكل</button>':''}`}
+
+function vSite(){
+  const c=D.cfg;
+  return `
+  <div class="card">
+    <h3>🛠️ وضع الصيانة</h3>
+    <label class="sw"><input type="checkbox" id="mt" ${c.maintenance?'checked':''}> تفعيل وضع الصيانة (الزوار سيرون رسالة الصيانة فقط)</label>
+    <div style="margin-top:12px">
+      <label style="display:block;margin-bottom:6px;color:var(--dim)">رسالة الصيانة:</label>
+      <input type="text" id="mtm" value="${esc(c.maintenanceMsg)}">
+    </div>
+  </div>
+  <div class="card">
+    <h3>📢 شريط الإعلانات العلوي</h3>
+    <label class="sw"><input type="checkbox" id="bo" ${c.bannerOn?'checked':''}> إظهار الشريط أعلى الموقع</label>
+    <div style="margin-top:12px">
+      <label style="display:block;margin-bottom:6px;color:var(--dim)">نص الإعلان:</label>
+      <input type="text" id="bt" value="${esc(c.banner)}" placeholder="مثال: متاح حالياً لاستقبال مشاريع برمجية جديدة 🚀">
+    </div>
+  </div>
+  <div class="card">
+    <h3>💬 مساعد الذكاء الاصطناعي (شات)</h3>
+    <label class="sw"><input type="checkbox" id="co" ${c.chatOn?'checked':''}> تشغيل نافذة الشات للزوار في الموقع</label>
+  </div>
+  <div class="action-bar"><button class="btn" id="save">حفظ التعديلات العامة ✓</button></div>`;
+}
+
+function vAI(){
+  return `
+  <div class="card">
+    <h3>🤖 تعليمات وشخصية المساعد الذكي (زلفي)</h3>
+    <textarea id="pe" placeholder="اكتب هنا أي توجيهات إضافية، مثل: خلّك مرح أكثر، ركّز على ذكر لغة بايثون...">${esc(D.cfg.persona)}</textarea>
+    <p class="hint">هذا النص يتم دمجه تلقائياً مع شخصية ومعلومات حسين الأساسية في الـ Worker ليصبح أسلوب ردود زلفي كما تريده تماماً.</p>
+  </div>
+  <div class="action-bar"><button class="btn" id="save">حفظ شخصية الذكاء ✓</button></div>`;
+}
+
+function vProjects(){
+  return `
+  <div class="card">
+    <h3>🚀 إدارة المشاريع المعروضة في الموقع (حد أقصى 12)</h3>
+    <div id="projects-list">
+      ${P.map((p,i)=>`
+        <div class="project-row">
+          <input type="text" data-i="${i}" data-f="name" value="${esc(p.name)}" placeholder="اسم المشروع">
+          <input type="text" data-i="${i}" data-f="desc" value="${esc(p.desc)}" placeholder="وصف قصير للمشروع">
+          <input type="text" data-i="${i}" data-f="stack" value="${esc(p.stack)}" placeholder="التقنيات (Python, API)">
+          <button class="btn r" data-del="${i}">حذف</button>
+        </div>`).join('')}
+    </div>
+    <button class="btn g" id="add" style="margin-top:10px">+ إضافة مشروع جديد</button>
+  </div>
+  <div class="action-bar"><button class="btn" id="save">حفظ المشاريع في الموقع ✓</button></div>`;
+}
+
+function vInbox(){
+  return `
+  <div class="card">
+    <h3>📥 رسائل الزوار الواردة (${D.inbox.length})</h3>
+    ${D.inbox.map(m=>`<div class="item"><small>${esc(m.name||'زائر')} · ${fmt(m.t)}</small><p>${esc(m.msg)}</p></div>`).join('')||'<p class="hint">لا توجد رسائل واردة حالياً.</p>'}
+  </div>
+  ${D.inbox.length ? '<div class="action-bar"><button class="btn r" data-clear="inbox">مسح كافة الرسائل الواردة</button></div>' : ''}`;
+}
+
+function vChats(){
+  return `
+  <div class="card">
+    <h3>💬 سجل محادثات الزوار مع زلفي (${D.chats.length})</h3>
+    ${D.chats.map(m=>`<div class="item"><small>${fmt(m.t)}</small><p>👤 <b>سؤال الزائر:</b> ${esc(m.q)}</p><p class="bot">🤖 <b>رد زلفي:</b> ${esc(m.a)}</p></div>`).join('')||'<p class="hint">لا توجد محادثات مسجلة حتى الآن.</p>'}
+  </div>
+  ${D.chats.length ? '<div class="action-bar"><button class="btn r" data-clear="chats">مسح سجل المحادثات بالكامل</button></div>' : ''}`;
+}
 
 function bind(){
   const m=$('#main');
   m.querySelectorAll('[data-f]').forEach(i=>i.oninput=()=>P[i.dataset.i][i.dataset.f]=i.value);
   m.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{P.splice(+b.dataset.del,1);draw()});
   const a=$('#add');if(a)a.onclick=()=>{if(P.length<12){P.push({name:'',desc:'',stack:''});draw()}};
-  m.querySelectorAll('[data-clear]').forEach(b=>b.onclick=async()=>{if(confirm('متأكد؟')){await api('/api/admin/clear',{what:b.dataset.clear});D[b.dataset.clear]=[];draw();toast('تم')}});
+  
+  m.querySelectorAll('[data-clear]').forEach(b=>b.onclick=async()=>{
+    if(confirm('هل أنت متأكد من رغبتك في الحذف نهائياً؟')){
+      await api('/api/admin/clear',{what:b.dataset.clear});
+      D[b.dataset.clear]=[];
+      draw();
+      toast('تمت عملية المسح بنجاح');
+    }
+  });
+
   const s=$('#save');if(s)s.onclick=save;
 }
+
 async function save(){
-  const g=id=>$('#'+id),c=D.cfg;
-  if(g('mt')){c.maintenance=g('mt').checked;c.maintenanceMsg=g('mtm').value;c.bannerOn=g('bo').checked;c.banner=g('bt').value;c.chatOn=g('co').checked}
-  if(g('pe'))c.persona=g('pe').value;
-  c.projects=tab==='projects'||c.projects?P.filter(p=>p.name.trim()):null;
-  try{await api('/api/admin/config',c);toast('تم الحفظ ✓')}catch(e){toast('فشل الحفظ')}
+  const g=id=>$('#'+id), c=D.cfg;
+  if(g('mt')){
+    c.maintenance=g('mt').checked;
+    c.maintenanceMsg=g('mtm').value;
+    c.bannerOn=g('bo').checked;
+    c.banner=g('bt').value;
+    c.chatOn=g('co').checked;
+  }
+  if(g('pe')) c.persona=g('pe').value;
+  c.projects= tab==='projects' || c.projects ? P.filter(p=>p.name.trim()) : null;
+  
+  try{
+    const res = await api('/api/admin/config', c);
+    if(res.ok){ toast('تم الحفظ وتحديث الموقع بنجاح ✓'); }
+    else{ toast('فشل في حفظ التعديلات'); }
+  }catch(e){
+    toast('خطأ بالاتصال بالسيرفر');
+  }
 }
+
 load();
 </script>
 </body>
